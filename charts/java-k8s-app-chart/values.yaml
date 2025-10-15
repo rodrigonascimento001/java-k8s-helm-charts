@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/rodrigonascimento001/java-k8s/java-k8s
+  tag: 98bc32eb9171eb0b8b7330157559ab000f95be12
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: java-k8s.local
+  path: /
+  pathType: Prefix
+  rewriteTarget: /
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+imagePullSecrets:
+  - name: ghcr-secret

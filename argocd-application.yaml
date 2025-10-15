@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: java-k8s-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rodrigonascimento001/java-k8s-helm-charts.git
+    targetRevision: develop
+    path: charts/java-k8s-app-chart
+    helm:
+      releaseName: java-k8s-app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: java-k8s
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
