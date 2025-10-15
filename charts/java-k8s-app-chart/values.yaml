@@ -1,9 +1,9 @@
 replicaCount: 2
 
 image:
-  repository: rodrigonascimento001/java-k8s-helm-charts
-  tag: "latest"
-  pullPolicy: IfNotPresent
+  repository: ghcr.io/rodrigonascimento001/java-k8s/java-k8s
+  tag: 98bc32eb9171eb0b8b7330157559ab000f95be12
+  pullPolicy: Always
 
 service:
   type: ClusterIP
@@ -25,3 +25,5 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
+imagePullSecrets:
+  - name: ghcr-secret
