@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitoring-stack.fullname" . }}
+  labels:
+    {{- include "monitoring-stack.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "monitoring-stack.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "monitoring-stack.labels" . | nindent 8 }}
+          {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "monitoring-stack.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "monitoring-stack.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- with .Values.livenessProbe }}
+              {{- toYaml . | nindent 12 }}
+              {{- else }}
+              httpGet:
+                path: /
+                port: {{ .Values.service.port }}
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              {{- end }}
+          readinessProbe:
+            {{- with .Values.readinessProbe }}
+              {{- toYaml . | nindent 12 }}
+              {{- else }}
+              httpGet:
+                path: /
+                port: {{ .Values.service.port }}
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              {{- end }}
+          resources:
+            {{- with .Values.resources }}
+              {{- toYaml . | nindent 12 }}
+              {{- else }}
+              limits:
+                cpu: "500m"
+                memory: "256Mi"
+              requests:
+                cpu: "250m"
+                memory: "128Mi"
+              {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,29 @@
+kube-prometheus-stack:
+  grafana:
+    adminPassword: admin
+    service:
+      type: NodePort
+      nodePort: 32000
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - grafana.local
+
+  prometheus:
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: false
+
+  alertmanager:
+    enabled: false # opcional, se não quiser alertmanager
+
+  # Exponha Prometheus se quiser acessar via browser:
+  prometheus:
+    service:
+      type: NodePort
+      nodePort: 32001
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - prometheus.local
