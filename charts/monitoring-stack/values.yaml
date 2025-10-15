@@ -1,29 +1,34 @@
-kube-prometheus-stack:
-  grafana:
-    adminPassword: admin
-    service:
-      type: NodePort
-      nodePort: 32000
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - grafana.local
+replicaCount: 1
+image:
+  repository: nginx
+  tag: "latest"
+  pullPolicy: IfNotPresent
 
-  prometheus:
-    prometheusSpec:
-      serviceMonitorSelectorNilUsesHelmValues: false
+serviceAccount:
+  create: true
+  name: ""
+  automount: true
+  annotations: {}
 
-  alertmanager:
-    enabled: false # opcional, se não quiser alertmanager
+service:
+  type: ClusterIP
+  port: 80
 
-  # Exponha Prometheus se quiser acessar via browser:
-  prometheus:
-    service:
-      type: NodePort
-      nodePort: 32001
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - prometheus.local
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: monitoring.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+# ...demais valores...

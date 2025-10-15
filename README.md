@@ -154,6 +154,11 @@ curl -v http://localhost:<NODEPORT> -H "Host: java-k8s.local"
 kubectl apply -f argocd-application.yaml -n argocd
 ```
 
+DEPLOY MONITORING
+```bash
+kubectl apply -f argocd/monitoring-stack.yaml -n argocd
+```
+
 Ou via CLI:
 ```bash
 argocd app create java-k8s-app   --repo https://github.com/<SEU_USUARIO>/java-k8s-manifests.git   --path charts/java-k8s-app-chart   --dest-server https://kubernetes.default.svc   --dest-namespace java-k8s   --project default   --helm-release-name java-k8s-app   --sync-policy automated
