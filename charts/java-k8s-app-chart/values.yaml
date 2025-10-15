@@ -1,0 +1,27 @@
+replicaCount: 2
+
+image:
+  repository: rodrigonascimento001/java-k8s-helm-charts
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: java-k8s.local
+  path: /
+  pathType: Prefix
+  rewriteTarget: /
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
