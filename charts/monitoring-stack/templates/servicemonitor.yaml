@@ -1,16 +1,18 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "monitoring-stack.fullname" . }}
+  name: my-java-app
   namespace: monitoring
   labels:
-    release: prometheus
+    release: monitoring-stack
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: monitoring-stack
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app: java-k8s-app-chart
+  namespaceSelector:
+    matchNames:
+      - java-k8s
   endpoints:
     - port: http
+      path: /actuator/prometheus
       interval: 15s
-      path: /
