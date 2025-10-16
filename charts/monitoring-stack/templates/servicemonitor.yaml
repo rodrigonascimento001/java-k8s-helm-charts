@@ -1,18 +1,22 @@
+{{- if .Values.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: my-java-app
-  namespace: monitoring
+  name: {{ include "monitoring-stack.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    release: monitoring-stack
+    release: {{ .Release.Name }}
+    {{- include "monitoring-stack.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: java-k8s-app-chart
+      app: {{ .Values.serviceMonitor.targetAppLabel | default "java-k8s-app-chart" }}
   namespaceSelector:
     matchNames:
-      - java-k8s
+      - {{ .Values.serviceMonitor.targetNamespace | default "java-k8s" }}
   endpoints:
-    - port: http
-      path: /actuator/prometheus
-      interval: 15s
+    - port: {{ .Values.serviceMonitor.portName | default "http" }}
+      path: {{ .Values.serviceMonitor.path | default "/actuator/prometheus" }}
+      interval: {{ .Values.serviceMonitor.interval | default "15s" }}
+  {{- end }}
+

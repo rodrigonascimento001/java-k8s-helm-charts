@@ -40,3 +40,11 @@ prometheus:
 grafana:
   persistence:
     enabled: false
+
+serviceMonitor:
+  enabled: true
+  targetAppLabel: java-k8s-app-chart   # label do Service da sua aplicação Java
+  targetNamespace: java-k8s            # namespace onde sua app está
+  portName: http                       # nome da porta exposta no Service
+  path: /actuator/prometheus           # endpoint do actuator Prometheus
+  interval: 15s                        # frequência de scraping
