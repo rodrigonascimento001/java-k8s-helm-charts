@@ -107,6 +107,20 @@ cd  ~/Desktop/development/repos/java-k8s-helm-charts
 helm install java-k8s-app ./charts/java-k8s-app-chart -n java-k8s   --create-namespace   --wait
 ```
 
+Se quiser atualizar o release existente:
+
+
+```bash
+helm upgrade java-k8s-app ./charts/java-k8s-app-chart -n java-k8s --wait
+```
+Ou, para remover o release e instalar novamente:
+
+
+```bash
+helm uninstall java-k8s-app -n java-k8s
+helm install java-k8s-app ./charts/java-k8s-app-chart -n java-k8s --wait
+```
+
 Verifique:
 ```bash
 kubectl get all -n java-k8s
@@ -143,7 +157,7 @@ curl -v http://localhost:30351 -H "Host: java-k8s.local"
 
 ```bash
 kubectl get svc -n ingress-nginx
-curl -v http://localhost:<NODEPORT> -H "Host: java-k8s.local"
+curl -v http://localhost:30183 -H "Host: java-k8s.local"
 ```
 
 ---
@@ -151,7 +165,7 @@ curl -v http://localhost:<NODEPORT> -H "Host: java-k8s.local"
 ## 🧩 10. Deploy via ArgoCD (Helm Chart GitOps)
 
 ```bash
-kubectl apply -f argocd-application.yaml -n argocd
+kubectl apply -f argocd/argocd-application.yaml -n argocd
 ```
 
 DEPLOY MONITORING
@@ -165,6 +179,43 @@ argocd app create java-k8s-app   --repo https://github.com/<SEU_USUARIO>/java-k8
 ```
 
 ---
+
+
+VER O NOME DOS CAMARADAS  PARA O port-forward
+
+```bash
+kubectl get svc -n monitoring
+```
+
+```bash
+kubectl port-forward svc/prometheus-server -n monitoring 9090:9090
+```
+
+ou, se o nome for diferente (exemplo do kube-prometheus-stack):
+
+```bash
+kubectl port-forward svc/monitoring-stack-kube-prom-prometheus -n monitoring 9090:9090
+```
+
+Procure por algo como grafana ou loki-stack-grafana.
+
+b) Port-forward para o Grafana
+
+```bash
+kubectl port-forward svc/grafana -n monitoring 3000:3000
+```
+
+ou, se o nome for diferente:
+
+```bash
+kubectl port-forward svc/monitoring-stack-grafana -n monitoring 3000:80
+```
+🔹 Get Grafana 'admin' user password by running:
+
+```bash
+kubectl --namespace monitoring get secrets monitoring-stack-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+```
+
 
 ## 🩺 11. Troubleshooting
 
