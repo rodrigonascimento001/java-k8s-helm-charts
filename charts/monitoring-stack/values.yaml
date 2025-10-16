@@ -31,10 +31,12 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
 
-# ...demais valores...
 prometheus:
   prometheusSpec:
     storageSpec: {}
-    # ou
-    persistence:
-      enabled: false
+  persistence:
+    enabled: false
+
+grafana:
+  persistence:
+    enabled: false
