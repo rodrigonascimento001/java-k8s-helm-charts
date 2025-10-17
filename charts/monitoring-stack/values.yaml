@@ -48,3 +48,14 @@ serviceMonitor:
   portName: http                       # nome da porta exposta no Service
   path: /actuator/prometheus           # endpoint do actuator Prometheus
   interval: 15s                        # frequência de scraping
+
+loki-stack:
+  enabled: true
+  loki:
+    enabled: true
+  promtail:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  grafana:
+    enabled: false # já está instalado pelo kube-prometheus-stack
